@@ -31,6 +31,6 @@ with DAG(
     #     task2
     # )  # bakal nyambu ke task yang pertama tapi jadinya Task2 -> Task1
 
-    task1.set_downsteam(
+    task1.set_downstream(
         task3
     )  # kalo semisam ada 2 downstream maka task yang nyambung ke parentnya jadi 2 task dan berjalan bersamaan
