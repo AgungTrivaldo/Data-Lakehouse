@@ -46,5 +46,7 @@ with DAG(
 
     # ATAU BISA PAKE INI BIAR LEBIH SIMPLE
 
-    task5 << task1 >> task2 >> task4
-    task1 >> task3
+    task5 << task1 >> [task2,task3] >> task4
+
+    # >> buat downstream
+    # << buat Upstream 
