@@ -23,14 +23,23 @@ with DAG(
         task_id="third_task",
         bash_command="echo This is the third task that run parallel with the second task",
     )
-    task1.set_downstream(
-        task2
-    )  # bakal nyambung ke task yang pertama jadi Task1 -> Task2
+    task4 = BashOperator(
+        task_id="fourth_task",
+        bash_command="echo This is the Fourth task that run after the second task",
+    )
+    # task1.set_downstream(
+    #     task2
+    # )  # bakal nyambung ke task yang pertama jadi Task1 -> Task2
 
     # task1.set_upstream(
     #     task2
     # )  # bakal nyambu ke task yang pertama tapi jadinya Task2 -> Task1
 
-    task1.set_downstream(
-        task3
-    )  # kalo semisam ada 2 downstream maka task yang nyambung ke parentnya jadi 2 task dan berjalan bersamaan
+    # task1.set_downstream(
+    #     task3
+    # )  # kalo semisam ada 2 downstream maka task yang nyambung ke parentnya jadi 2 task dan berjalan bersamaan
+
+    # ATAU BISA PAKE INI BIAR LEBIH SIMPLE
+
+    task1 >> task2 >> task4
+    task1 >> task3
