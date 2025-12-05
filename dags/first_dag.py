@@ -24,4 +24,4 @@ with DAG(
         task_id = 'second_task',
         bash_command = 'echo This is the second task'
     )
-    task1.set_downstream(task2)
+    task1.set_upstream(task2) # bakal nyambung ke task yang pertama jadi Task1 -> Task2
