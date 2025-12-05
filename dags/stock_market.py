@@ -9,3 +9,5 @@ from datetime import datetime
     )
 def stock_marker():
     pass
+
+stock_marker()
