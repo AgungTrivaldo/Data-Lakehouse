@@ -45,8 +45,13 @@ with DAG(
     # )  # kalo semisam ada 2 downstream maka task yang nyambung ke parentnya jadi 2 task dan berjalan bersamaan
 
     # ATAU BISA PAKE INI BIAR LEBIH SIMPLE
+    # task5 << task1 >> task2 >> task4 (ENDNYA di task 4 lewat dari task 2)
+    # task1 >> task3 (Endnya di task 3 langsung tanpa harus melewati task 2 dan task 4)
 
-    task5 << task1 >> [task2,task3] >> task4
+    # PAKE YANG ATAS KALO END UPNYA BEDA
+
+    task5 << task1 >> [task2, task3] >> task4
+    # pake ini kalo semisal udah diparalel dan endpointnya sama sama di task 4
 
     # >> buat downstream
-    # << buat Upstream 
+    # << buat Upstream
