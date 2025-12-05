@@ -46,7 +46,7 @@ services:
     image: trinodb/trino
     container_name: trino
     ports:
-      - "8080:8080"
+      - "8080:8080" 
     volumes:
       - ./trino-config:/etc/trino/
 
@@ -87,3 +87,56 @@ services:
       - ./airflow_plugins:/opt/airflow/plugins
     command: airflow scheduler
 
+  dbt:
+    container_name: dbt
+    build: .
+    volumes:
+      - ./:/usr/src/dbt
+    depends_on:
+      postgres:
+        condition: service_healthy
+  kafka:
+    image: confluentinc/cp-kafka:latest # Or a specific version like 7.6.0
+    hostname: kafka
+    container_name: kafka
+    ports:
+      - "9092:9092" # External access to Kafka
+      - "9093:9093" # Internal access for KRaft communication
+    environment:
+      KAFKA_KRAFT_MODE: "true"
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@localhost:9093"
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+  spark-master:
+    image: bitnami/spark:latest
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "8082:8080" # Spark Master UI
+    volumes:
+      - ./spark:/opt/spark-apps
+
+  # ➕ Spark Worker
+  spark-worker:
+    image: bitnami/spark:latest
+    container_name: spark-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+    depends_on:
+      - spark-master
+    ports:
+      - "8083:8081" # Spark Worker UI
+    volumes:
+      - ./spark:/opt/spark-apps
+  volumes:
+  kafka-data:
