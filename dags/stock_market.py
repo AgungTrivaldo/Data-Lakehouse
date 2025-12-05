@@ -1,13 +1,14 @@
-from airflow.decorators import dag
+from airflow import DAG
+from airflow.decorators import task
 from datetime import datetime
 
-@dag(
-    start = datetime(2025,1,1),
-    schedule = '@daily',
-    catchup = False,
-    tags = ['stock']
-    )
-def stock_marker():
-    pass
-
-stock_marker()
+with DAG(
+    dag_id = 'tutorial',
+    schedule_interval = '@once',
+    start_date = datetime(2023, 1, 1),
+    tags=['example'],
+) as dag:
+    
+    @task
+    def test():
+        pass
