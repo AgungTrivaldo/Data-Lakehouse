@@ -20,7 +20,7 @@ with DAG(
         task_id="second_task", bash_command="echo This is the second task"
     )
     task3 = BashOperator(
-        task_id="second_task",
+        task_id="third_task",
         bash_command="echo This is the third task that run parallel with the second task",
     )
     task1.set_downstream(
