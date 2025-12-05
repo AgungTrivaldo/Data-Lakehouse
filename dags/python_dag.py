@@ -19,7 +19,7 @@ with DAG(
     start_date=datetime(2025,1,1)
 ) as dag:
     task1 = PythonOperator(
-        task_id = 'First_Task'
-        python_callable = greet
+        task_id = 'First_Task',
+        python_callable = greet,
         op_kwargs = {'name':'Agung','age':22}
     )
