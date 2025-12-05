@@ -8,8 +8,13 @@ default_args = {
     'retry_delay':timedelta(minutes=2)
 }
 
-def greet(name,age):
+# function
+def greet(ti,age):
+    name = ti.xcom(task_id = 'Second_Task')
     print(f"jenengku {name},umur {age}")
+
+def get_name():
+    return 'budi'
 
 with DAG(
     dag_id='python_dag',
@@ -20,6 +25,13 @@ with DAG(
 ) as dag:
     task1 = PythonOperator(
         task_id = 'First_Task',
-        python_callable = greet,
-        op_kwargs = {'name':'Agung','age':22}
+        python_callable = greet, # ngecall function yang bakal dipake
+        op_kwargs = {'age':22} # input parameter buat functionya
     )
+
+    task2 = PythonOperator(
+        task_id = 'Second_Task',
+        python_callable = get_name,
+    )
+
+    task2 >> task1
