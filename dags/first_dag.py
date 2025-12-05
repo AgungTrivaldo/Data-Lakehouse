@@ -27,6 +27,11 @@ with DAG(
         task_id="fourth_task",
         bash_command="echo This is the Fourth task that run after the second task",
     )
+
+    task5 = BashOperator(
+        task_id="fifth_task",
+        bash_command="echo This is the Fifth task that run before the first task",
+    )
     # task1.set_downstream(
     #     task2
     # )  # bakal nyambung ke task yang pertama jadi Task1 -> Task2
@@ -41,5 +46,5 @@ with DAG(
 
     # ATAU BISA PAKE INI BIAR LEBIH SIMPLE
 
-    task1 >> task2 >> task4
+    task5 << task1 >> task2 >> task4
     task1 >> task3
