@@ -104,8 +104,6 @@ services:
       - "7077:7077"
     environment:
       - INIT_DAEMON_STEP=setup_spark
-    networks:
-      - ndsnet
 
   spark-worker:
     image: airflow/spark-worker
@@ -114,8 +112,6 @@ services:
     depends_on:
       - spark-master
     ports:
-      - "8081:8081"
+      - "8083:8083"
     environment:
       - "SPARK_MASTER=spark://spark-master:7077"
-    networks:
-      - ndsnet
