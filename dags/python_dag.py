@@ -10,14 +10,14 @@ default_args = {
 
 # function
 def greet(ti,age):
-    name = ti.xcom(task_id = 'Second_Task')
+    name = ti.xcom_pull(task_id = 'Second_Task')
     print(f"jenengku {name},umur {age}")
 
 def get_name():
     return 'budi'
 
 with DAG(
-    dag_id='python_dag',
+    dag_id='python_dagv01',
     default_args=default_args,
     description='A simple python DAG',
     schedule_interval='@once',
