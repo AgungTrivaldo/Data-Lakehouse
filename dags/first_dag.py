@@ -16,7 +16,7 @@ with DAG(
     schedule_interval = '@daily', # DAG frequency 
 ) as dag:
     task1 = BashOperator(
-        task_id = 'first task',
+        task_id = 'first_task',
         bash_command = 'echo This is my first DAG'
     )
 
