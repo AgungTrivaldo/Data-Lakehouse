@@ -10,7 +10,7 @@ default_args = {
 
 # function
 def greet(ti,age):
-    name = ti.xcom_pull(task_id = 'Second_Task')
+    name = ti.xcom_pull(task_ids = 'Second_Task')
     print(f"jenengku {name},umur {age}")
 
 def get_name():
