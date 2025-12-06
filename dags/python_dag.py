@@ -8,18 +8,18 @@ default_args = {"owner": "Agung", "retries": "5", "retry_delay": timedelta(minut
 # function
 def greet(ti):
     name = ti.xcom_pull(
-        task_ids="Second_Task",key='name'
+        task_ids="Second_Task", key="name"
     )  # Xcom_pull bisa dipake buat ngambil data dari task atau func lain
-    age = ti.xcom_pull(
-        task_ids="Second_Task",key='age'
-    )
+    age = ti.xcom_pull(task_ids="Second_Task", key="age")
     print(f"jenengku {name},umur {age}")
 
 
 def get_name(ti):
-    ti.xcom_push(key='name',value='Don')
-    ti.xcom_push(key='age',value=32)
+    ti.xcom_push(key="name", value="Don")
+    ti.xcom_push(key="age", value=32)  # xcom_push buat ngasih data
 
+
+# secara konsep mirip dengan git push pull
 
 with DAG(
     dag_id="python_dagv01",
