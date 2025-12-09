@@ -5,6 +5,8 @@ import requests
 import json
 from airflow.sensors.base import PokeReturnValue
 
+symbol = "NVDA"
+
 
 @dag(
     dag_id="stock_market_api",
@@ -21,21 +23,17 @@ def stock_market():
         response = requests.get(url, headers=api.extra_dejson["headers"])
         condition = response.json()["finance"]["result"] is None
         return PokeReturnValue(is_done=condition, xcom_value=url)
-    
+
     @task
-    def stock_prices(url):
+    def stock_prices(url, symbol):
+        url = f"{url}{symbol}?metrics=high?&interval=1d&range=1y"
         api = BaseHook.get_connection("stock_api")
         response = requests.get(url, headers=api.extra_dejson["headers"])
-        symbols = response.json()['symbol']  # assuming the API gives this
-        results = {}
-        for symbol in symbols:
-            stock_url = f"{url}{symbol}?metrics=high&interval=1d&range=1y"
-            res = requests.get(stock_url, headers=api.extra_dejson["headers"]).json()
-            results[symbol] = res['chart']['result'][0]
-        return json.dumps(results)
+        data = response.json()["chart"]["result"][0]
+        return json.dumps(data)
 
     url = is_api_available()
-    stock_prices(url)
+    stock_prices(url, symbol)
 
 
 stock_market()
