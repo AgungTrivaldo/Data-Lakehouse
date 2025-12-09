@@ -6,7 +6,7 @@ from airflow.sensors.base import PokeReturnValue
 
 
 @dag(
-    dag_id="first_taskflowv1",
+    dag_id="stock_market_api",
     schedule_interval="@daily",
     start_date=datetime(2025, 1, 1),
     catchup=False,
