@@ -14,7 +14,7 @@ from airflow.sensors.base import PokeReturnValue
 def stock_market():
     @task.sensor(poke_interval=30, timeout=300, mode="poke")
     def is_api_available() -> PokeReturnValue:
-        api = Basehook.get_connection("api_connection")
+        api = BaseHook.get_connection("api_connection")
         url = f"{api.host}{api.extra_dejson['endpoint']}"
         print(url)
         response = requests.get(url, headers=api.extra_dejson["headers"])
