@@ -23,7 +23,7 @@ def stock_market():
         return PokeReturnValue(is_done=condition, xcom_value=url)
     
     @task
-    def stock_prices(url, symbol):
+    def stock_prices(url):
         api = BaseHook.get_connection("stock_api")
         response = requests.get(url, headers=api.extra_dejson["headers"])
         symbols = response.json()['allSymbols']  # assuming the API gives this
