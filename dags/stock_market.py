@@ -36,11 +36,11 @@ def stock_market():
 
     @task
     def store_stock_price(stock_prices):
-        api = BaseHook.get_connection("minio")
+        minio = BaseHook.get_connection("minio")
         client = Minio(
-            endpoint=Minio.extra_dejson["endpoint"].split("//")[1],
-            access_key=Minio.login,
-            secret_key=Minio.password,
+            endpoint=minio.extra_dejson["endpoint"].split("//")[1],
+            access_key=minio.login,
+            secret_key=minio.password,
             secure=False,
         )
         bucket_name = "storemarket"
