@@ -22,12 +22,14 @@ def stock_market():
         response = requests.get(url, headers=api.extra_dejson["headers"])
         condition = response.json()["finance"]["result"] is None
         return PokeReturnValue(is_done=condition, xcom_value=url)
+    @task
     def stock_prices(url,symbol):
         url = f"{url}{symbol}?metrics=high?&interval=1d&range=1y"
         api = BaseHook.get_connection("stock_api")
         response = requests.get(url, headers=api.extra_dejson["headers"])
-        return json.dumps(response.json()['chart'],['result'],[0])
-    is_api_available()
-    stock_prices()
+        data = response.json()['chart']['result'][0]
+        return json.dumps(data)
+    url = is_api_available()
+    stock_prices(url,symbol)
 
 stock_market()
