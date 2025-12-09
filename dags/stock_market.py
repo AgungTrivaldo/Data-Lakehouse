@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.hooks.base import Basehook
+from airflow.hooks.base import BaseHook
 from datetime import datetime, timedelta
 import request
 from airflow.sensors.base import PokeReturnValue
@@ -17,9 +17,11 @@ def stock_market():
         api = Basehook.get_connection("api_connection")
         url = f"{api.host}{api.extra_dejson['endpoint']}"
         print(url)
-        response = request.get(url, headers=api .extra_djson['headers'])
-        condition = response.json()['finance']['result'] is None
-        return PokeReturnValue(is_done = condition, xcom_value=url)
+        response = request.get(url, headers=api.extra_djson["headers"])
+        condition = response.json()["finance"]["result"] is None
+        return PokeReturnValue(is_done=condition, xcom_value=url)
+
     is_api_available
+
 
 stock_market()
