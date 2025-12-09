@@ -26,7 +26,7 @@ def stock_market():
     def stock_prices(url):
         api = BaseHook.get_connection("stock_api")
         response = requests.get(url, headers=api.extra_dejson["headers"])
-        symbols = response.json()['allSymbols']  # assuming the API gives this
+        symbols = response.json()['symbols']  # assuming the API gives this
         results = {}
         for symbol in symbols:
             stock_url = f"{url}{symbol}?metrics=high&interval=1d&range=1y"
