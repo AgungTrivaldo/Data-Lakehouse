@@ -1,6 +1,8 @@
 from airflow.decorators import dag, task
 from airflow.hooks.base import BaseHook
+from minio import Minio
 from datetime import datetime, timedelta
+from io import BytesIO
 import requests
 import json
 from airflow.sensors.base import PokeReturnValue
@@ -32,8 +34,32 @@ def stock_market():
         data = response.json()["chart"]["result"][0]
         return json.dumps(data)
 
+    @task
+    def store_stock_price(stock_prices):
+        api = BaseHook.get_connection("minio")
+        client = Minio(
+            endpoint=minio.extra_dejson["endpoint"].split("//")[1],
+            access_key=minio.login,
+            secret_key=minio.password,
+            secure=False,
+        )
+        bucket_name = "storemarket"
+        if not client.bucket_exist(bucket_name):
+            client.make_bucket(bucket_name)
+        stock = json.loads(stock)
+        symbol = stock["meta"]["symbol"]
+        data = json.dumps(stock, ensure_ascii=False).encode("utf8")
+        objw = client.put_object(
+            bucket_name=bucket_name,
+            object_name=f"{symbol}/prices.json",
+            data=BytesIO(data),
+            length=len(data),
+        )
+        return f"{objw.bucket_name}/{symbol}"
+
     url = is_api_available()
-    stock_prices(url, symbol)
+    stock_prices = stock_prices(url, symbol)
+    store_stock_price(stock_prices)
 
 
 stock_market()
