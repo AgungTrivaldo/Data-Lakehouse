@@ -44,11 +44,11 @@ def stock_market():
             secure=False,
         )
         bucket_name = "storemarket"
-        if not client.bucket_exist(bucket_name):
+        if not client.bucket_exists(bucket_name):
             client.make_bucket(bucket_name)
         stock = json.loads(stock)
         symbol = stock["meta"]["symbol"]
-        data = json.dumps(stock, ensure_ascii=False).encode("utf8")
+        data = json.dumps(stock_prices, ensure_ascii=False).encode("utf8")
         objw = client.put_object(
             bucket_name=bucket_name,
             object_name=f"{symbol}/prices.json",
