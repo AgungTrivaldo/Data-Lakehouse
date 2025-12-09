@@ -21,7 +21,7 @@ def stock_market():
         condition = response.json()["finance"]["result"] is None
         return PokeReturnValue(is_done=condition, xcom_value=url)
 
-    is_api_available
+    is_api_available()
 
 
 stock_market()
