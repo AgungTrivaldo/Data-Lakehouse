@@ -29,7 +29,7 @@ def stock_market():
     @task
     def fetch_symbol():
         api = BaseHook.get_connection("stock_api")
-        response = requests.get(url, headers=api.extra_dejson.get("headers", {}))
+        response = requests.get(url, headers=api.extra_dejson["headers"])
         symbol= response.json()["chart"]["result"]["meta"]["symbol"][0]
         return json.dumps(symbol)
 
