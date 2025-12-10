@@ -84,7 +84,7 @@ def stock_market():
     )
     @task
     def store_formatted_csv(stored_prices):
-        client = minio_client
+        client = minio_client()
         prefix = f"{stock_prices.split('/')[1]}/formatted_prices/"
         objects = client.list_objects(bucket_name,prefix=prefix,recursive=True)
         for obj in objects:
@@ -96,8 +96,9 @@ def stock_market():
     url = is_api_available()
     stock_prices = stock_prices(url, symbol)
     stored_prices = store_stock_price(stock_prices)
+    get_csv = store_formatted_csv(stored_prices)
 
-    stored_prices >> formatted_prices >> store_formatted_csv(stored_prices)
+    stored_prices >> formatted_prices >> get_csv
 
 
 stock_market()
