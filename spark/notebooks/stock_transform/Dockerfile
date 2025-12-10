@@ -1,5 +1,5 @@
 FROM bde2020/spark-submit:3.3.0-hadoop3.3
-	
+	  
 COPY stock_transform.py /app/
 
 RUN wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.2/hadoop-aws-3.3.2.jar \
@@ -11,9 +11,7 @@ ENV AWS_ACCESS_KEY_ID=admin123
 ENV AWS_SECRET_ACCESS_KEY=admin123
 ENV ENDPOINT=http://host.docker.internal:9000
 
-# Explicitly set the command
 CMD ["/spark/bin/spark-submit", \
-    "--master", "local[*]", \
-    "--jars", "/spark/jars/hadoop-aws-3.3.2.jar,/spark/jars/aws-java-sdk-bundle-1.11.1026.jar", \
-    "/app/stock_transform.py", \
-    "stock-market/AAPL/prices.json"]
+     "--master", "local[*]", \
+     "/app/stock_transform.py", \
+     "stock-market/AAPL/prices.json"]
