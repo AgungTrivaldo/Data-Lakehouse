@@ -6,6 +6,8 @@ from io import BytesIO
 import requests
 import json
 from airflow.sensors.base import PokeReturnValue
+from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
+
 
 symbol = "NVDA"
 
@@ -57,9 +59,16 @@ def stock_market():
         )
         return f"{objw.bucket_name}/{symbol}"
 
+    spark_transform = SparkSubmitOperator(
+        task_id="spark_transform_stock",
+        application="spark/notebooks/stock_transform/stock_transform.py",
+        conn_id="spark_default",
+        application_args=[],
+    )
+
     url = is_api_available()
     stock_prices = stock_prices(url, symbol)
-    store_stock_price(stock_prices)
-
+    stored_prices = store_stock_price(stock_prices)
+    stored_prices >> spark_transform
 
 stock_market()
