@@ -85,7 +85,8 @@ def stock_market():
     @task
     def store_formatted_csv(stored_prices):
         client = minio_client()
-        prefix = f"{stock_prices.split('/')[1]}/formatted_prices/"
+        path = stored_prices.split("/")[1]
+        prefix = f"{path}/formatted_prices/"
         objects = client.list_objects(bucket_name,prefix=prefix,recursive=True)
         for obj in objects:
             if obj.object_name.endswith('.csv'):
