@@ -6,7 +6,6 @@ from io import BytesIO
 import requests
 import json
 from airflow.sensors.base import PokeReturnValue
-from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.providers.docker.operators.docker import DockerOperator
 
 
