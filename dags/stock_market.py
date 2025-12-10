@@ -60,17 +60,17 @@ def stock_market():
         return f"{objw.bucket_name}/{symbol}"
 
     formatted_prices = DockerOperator(
-        task_id = 'formatted_prices',
-        image = 'airflow/stockapp',
-        container_name = 'format_prices',
-        api_version = 'auto',
-        auto_remove = 'success',
-        docker_url = 'unix://var/run/docker.sock',
-        network_mode = 'container:spark-master',
-        tty =  True,
-        xcom_all = False,
-        mount_tmp_dir = False,
-        command='spark-submit /app/stock_transform.py {{ ti.xcom_pull(task_ids="store_stock_price") }}'
+        task_id="formatted_prices",
+        image="airflow/stockapp",
+        container_name="format_prices",
+        api_version="auto",
+        auto_remove="success",
+        docker_url="tcp://docker-proxy:2375",
+        network_mode="container:spark-master",
+        tty=True,
+        xcom_all=False,
+        mount_tmp_dir=False,
+        command='spark-submit /app/stock_transform.py {{ ti.xcom_pull(task_ids="store_stock_price") }}',
     )
 
     url = is_api_available()
@@ -78,5 +78,6 @@ def stock_market():
     stored_prices = store_stock_price(stock_prices)
 
     stored_prices >> formatted_prices
+
 
 stock_market()
