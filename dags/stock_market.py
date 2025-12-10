@@ -65,7 +65,7 @@ def stock_market():
         container_name = 'format_prices',
         api_version = 'auto',
         auto_remove = 'success',
-        docker_url = 'tcp://docker-proxy:2375',
+        docker_url = 'unix://var/run/docker.sock',
         network_mode = 'container:spark-master',
         tty =  True,
         xcom_all = False,
