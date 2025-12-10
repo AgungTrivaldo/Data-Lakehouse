@@ -27,13 +27,6 @@ def stock_market():
         return PokeReturnValue(is_done=condition, xcom_value=url)
 
     @task
-    def fetch_symbol(url):
-        api = BaseHook.get_connection("stock_api")
-        response = requests.get(url, headers=api.extra_dejson["headers"])
-        symbol= response.json()["chart"]["result"]["meta"]["symbol"][0]
-        return json.dumps(symbol)
-
-    @task
     def stock_prices(url, symbol):
         url = f"{url}{symbol}?metrics=high?&interval=1d&range=1y"
         api = BaseHook.get_connection("stock_api")
@@ -66,7 +59,6 @@ def stock_market():
 
     url = is_api_available()
     stock_prices = stock_prices(url, symbol)
-    fetch_symbol(url)
     store_stock_price(stock_prices)
 
 
