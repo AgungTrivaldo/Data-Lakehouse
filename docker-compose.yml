@@ -66,6 +66,7 @@ services:
       - ./dags:/opt/airflow/dags
       - ./airflow_logs:/opt/airflow/logs
       - ./airflow_plugins:/opt/airflow/plugins
+      - /var/run/docker.sock:/var/run/docker.sock
     command: >
       bash -c "airflow db migrate &&
               airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com &&
@@ -86,6 +87,7 @@ services:
       - ./dags:/opt/airflow/dags
       - ./airflow_logs:/opt/airflow/logs
       - ./airflow_plugins:/opt/airflow/plugins
+      - /var/run/docker.sock:/var/run/docker.sock
     command: airflow scheduler
 
   dbt:
