@@ -59,31 +59,31 @@ def stock_market():
         )
         return f"{objw.bucket_name}/{symbol}"
 
-    formatted_prices = DockerOperator(
-        task_id="formatted_prices",
+    @task.docker(
         image="airflow/stockapp",
-        container_name="format_prices",
         api_version="auto",
         auto_remove="success",
         docker_url="tcp://docker-proxy:2375",
         network_mode="container:spark-master",
-        tty=True,
-        xcom_all=False,
         mount_tmp_dir=False,
         environment={
             'ENDPOINT': 'http://minio:9000',
             'AWS_ACCESS_KEY_ID': 'admin123',
             'AWS_SECRET_ACCESS_KEY': 'admin123',
-            'SPARK_APPLICATION_ARGS': 'storemarket/NVDA'
         }
-            
     )
+
+    def format_prices(stock_path: str):
+        """Run Spark job to format and transform stock prices"""
+        import os
+        # This will be available to the Docker container
+        os.environ['SPARK_APPLICATION_ARGS'] = stock_path
+        print(f"Processing stock data from: {stock_path}")
+
 
     url = is_api_available()
     stock_prices = stock_prices(url, symbol)
     stored_prices = store_stock_price(stock_prices)
-
-    stored_prices >> formatted_prices
-
+    format_prices(stored_prices)
 
 stock_market()
