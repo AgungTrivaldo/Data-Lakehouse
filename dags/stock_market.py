@@ -7,6 +7,7 @@ import requests
 import json
 from airflow.sensors.base import PokeReturnValue
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
+from airflow.providers.docker.operators.docker import DockerOperator
 
 
 symbol = "NVDA"
@@ -59,16 +60,26 @@ def stock_market():
         )
         return f"{objw.bucket_name}/{symbol}"
 
-    spark_transform = SparkSubmitOperator(
-        task_id="spark_transform_stock",
-        application="spark/notebooks/stock_transform/stock_transform.py",
-        conn_id="spark_default",
-        application_args=[],
+    formatted_prices = DockerOperator(
+        task_id = 'formatted_prices',
+        image = 'airflow/stockapp',
+        container_name = 'format_prices',
+        api_version = 'auto',
+        auto_remove = True,
+        docker_url = 'tcp://docker-proxy:2375',
+        network_mode = 'container:spark-master',
+        tty =  True,
+        xcom_all = False,
+        mount_tmp_dir = False,
+        env = {
+            'SPARK_APPLICATION_ARGS':'{{ti.xcom_pull(task_ids="store_stock_prices")}}'
+        }
     )
 
     url = is_api_available()
     stock_prices = stock_prices(url, symbol)
     stored_prices = store_stock_price(stock_prices)
-    stored_prices >> spark_transform
+
+    stored_prices >> formatted_prices
 
 stock_market()
