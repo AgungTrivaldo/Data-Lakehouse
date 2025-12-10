@@ -70,7 +70,10 @@ def stock_market():
         tty=True,
         xcom_all=False,
         mount_tmp_dir=False,
-        command='{{ ti.xcom_pull(task_ids="store_stock_price") }}',
+        command={
+        'SPARK_APPLICATION_ARGS':'{{ ti.xcom_pull(task_ids="store_stock_price") }}'
+        }
+            
     )
 
     url = is_api_available()
