@@ -70,8 +70,8 @@ def stock_market():
         tty=True,
         xcom_all=False,
         mount_tmp_dir=False,
-        command={
-        'SPARK_APPLICATION_ARGS':'{{ ti.xcom_pull(task_ids="store_stock_price") }}'
+        environment={
+            'SPARK_APPLICATION_ARGS':'{{ ti.xcom_pull(task_ids="store_stock_price") }}'
         }
             
     )
