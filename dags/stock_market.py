@@ -7,9 +7,10 @@ import requests
 import json
 from airflow.sensors.base import PokeReturnValue
 from airflow.providers.docker.operators.docker import DockerOperator
-
+from airflow.exception import AirflowNotFoundException
 
 symbol = "NVDA"
+bucket_name = "storemarket"
 
 
 @dag(
@@ -19,6 +20,16 @@ symbol = "NVDA"
     catchup=False,
 )
 def stock_market():
+    def minio_client():
+        minio = BaseHook.get_connection("minio")
+        client = Minio(
+            endpoint=minio.extra_dejson["endpoint"].split("//")[1],
+            access_key=minio.login,
+            secret_key=minio.password,
+            secure=False,
+        )
+        return client
+
     @task.sensor(poke_interval=30, timeout=300, mode="poke")
     def is_api_available() -> PokeReturnValue:
         api = BaseHook.get_connection("stock_api")
@@ -38,14 +49,7 @@ def stock_market():
 
     @task
     def store_stock_price(stock_prices):
-        minio = BaseHook.get_connection("minio")
-        client = Minio(
-            endpoint=minio.extra_dejson["endpoint"].split("//")[1],
-            access_key=minio.login,
-            secret_key=minio.password,
-            secure=False,
-        )
-        bucket_name = "storemarket"
+        client = minio_client()
         if not client.bucket_exists(bucket_name):
             client.make_bucket(bucket_name)
         stock = json.loads(stock_prices)
@@ -78,12 +82,22 @@ def stock_market():
         }
             
     )
+    @task
+    def store_formatted_csv(stored_prices):
+        client = minio_client
+        prefix = f"{stock_prices.split('/')[1]}/formatted_prices/"
+        objects = client.list_objects(bucket_name,prefix=prefix,recursive=True)
+        for obj in objects:
+            if obj.object_name.endswith('.csv'):
+                return obj.object_name
+        return AirflowNotFoundException("CSV Not Found")
+
 
     url = is_api_available()
     stock_prices = stock_prices(url, symbol)
     stored_prices = store_stock_price(stock_prices)
 
-    stored_prices >> formatted_prices
+    stored_prices >> formatted_prices >> store_formatted_csv(stored_prices)
 
 
 stock_market()
