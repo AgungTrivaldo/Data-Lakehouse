@@ -116,3 +116,11 @@ services:
       - "8083:8083"
     environment:
       - "SPARK_MASTER=spark://spark-master:7077"
+
+  docker-proxy:
+    image: alpine/socat
+    command: "TCP4-LISTEN:2375,fork,reuseaddr UNIX-CONNECT:/var/run/docker.sock"
+    ports:
+      - "2376:2375"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
