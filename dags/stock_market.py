@@ -71,7 +71,10 @@ def stock_market():
         xcom_all=False,
         mount_tmp_dir=False,
         environment={
-            'SPARK_APPLICATION_ARGS':'{{ ti.xcom_pull(task_ids="store_stock_price") }}'
+            'ENDPOINT': 'http://minio:9000',
+            'AWS_ACCESS_KEY_ID': 'admin123',
+            'AWS_SECRET_ACCESS_KEY': 'admin123',
+            'SPARK_APPLICATION_ARGS': 'storemarket/NVDA'
         }
             
     )
