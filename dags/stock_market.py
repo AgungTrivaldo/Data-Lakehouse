@@ -7,7 +7,7 @@ import requests
 import json
 from airflow.sensors.base import PokeReturnValue
 from airflow.providers.docker.operators.docker import DockerOperator
-from airflow.exception import AirflowNotFoundException
+# from airflow.exception import AirflowNotFoundException
 
 symbol = "NVDA"
 bucket_name = "storemarket"
@@ -90,7 +90,7 @@ def stock_market():
         for obj in objects:
             if obj.object_name.endswith('.csv'):
                 return obj.object_name
-        return AirflowNotFoundException("CSV Not Found")
+        return print("CSV Not Found")
 
 
     url = is_api_available()
