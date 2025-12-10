@@ -64,7 +64,7 @@ def stock_market():
         image = 'airflow/stockapp',
         container_name = 'format_prices',
         api_version = 'auto',
-        auto_remove = True,
+        auto_remove = 'success',
         docker_url = 'tcp://docker-proxy:2375',
         network_mode = 'container:spark-master',
         tty =  True,
