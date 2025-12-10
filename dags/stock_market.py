@@ -70,7 +70,7 @@ def stock_market():
         tty =  True,
         xcom_all = False,
         mount_tmp_dir = False,
-        command='spark-submit /opt/airflow/jobs/stock_transform/transform.py {{ ti.xcom_pull(task_ids="store_stock_price") }}'
+        command='spark-submit /app/stock_transform.py {{ ti.xcom_pull(task_ids="store_stock_price") }}'
     )
 
     url = is_api_available()
