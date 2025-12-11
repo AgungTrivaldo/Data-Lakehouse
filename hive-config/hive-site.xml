@@ -39,10 +39,10 @@
     <name>hive.metastore.warehouse.dir</name>
     <value>s3a://warehouse/</value>
   </property>
-  <!-- <property>
+  <property>
     <name>hive.metastore.pre.event.listeners</name>
     <value>org.apache.hadoop.hive.ql.security.authorization.AuthorizationPreEventListeners</value>
-  </property> -->
+  </property>
   <property>
     <name>hive.security.metastore.authorization.manager</name>
     <value>org.apache.hadoop.hive.ql.security.authorization.StorageBasedAuthorizationProvider</value>

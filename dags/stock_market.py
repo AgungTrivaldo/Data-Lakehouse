@@ -7,6 +7,7 @@ import requests
 import json
 from airflow.sensors.base import PokeReturnValue
 from airflow.providers.docker.operators.docker import DockerOperator
+
 # from airflow.exception import AirflowNotFoundException
 
 symbol = "NVDA"
@@ -75,23 +76,27 @@ def stock_market():
         xcom_all=False,
         mount_tmp_dir=False,
         environment={
-            'ENDPOINT': 'http://minio:9000',
-            'AWS_ACCESS_KEY_ID': 'admin123',
-            'AWS_SECRET_ACCESS_KEY': 'admin123',
-            'SPARK_APPLICATION_ARGS': 'storemarket/NVDA'
-        }
-            
+            "ENDPOINT": "http://minio:9000",
+            "AWS_ACCESS_KEY_ID": "admin123",
+            "AWS_SECRET_ACCESS_KEY": "admin123",
+            "SPARK_APPLICATION_ARGS": "storemarket/NVDA",
+        },
     )
+
     @task
     def store_formatted_csv(stored_prices):
         client = minio_client()
         path = stored_prices.split("/")[1]
         prefix = f"{path}/formatted_prices/"
-        objects = client.list_objects(bucket_name,prefix=prefix,recursive=True)
+        objects = client.list_objects(bucket_name, prefix=prefix, recursive=True)
         for obj in objects:
-            if obj.object_name.endswith('.csv'):
+            if obj.object_name.endswith(".csv"):
                 return obj.object_name
         return print("CSV Not Found")
+
+    @task
+    def store_to_iceberg():
+        pass
 
 
     url = is_api_available()
