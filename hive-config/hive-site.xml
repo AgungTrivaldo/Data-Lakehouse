@@ -1,38 +1,38 @@
 <configuration>
   <property>
-    <name>s3a.endpoint</name>
+    <name>fs.s3a.endpoint</name>
     <value>http://minio:9000</value> <!-- use API port -->
   </property>
   <property>
-    <name>s3a.access.key</name>
+    <name>fs.s3a.access.key</name>
     <value>admin123</value>
   </property>
   <property>
-    <name>s3a.secret.key</name>
+    <name>fs.s3a.secret.key</name>
     <value>admin123</value>
   </property>
   <property>
-    <name>s3a.path.style.access</name>
+    <name>fs.s3a.path.style.access</name>
     <value>true</value>
   </property>
   <property>
-    <name>s3a.impl</name>
+    <name>fs.s3a.impl</name>
     <value>org.apache.hadoop.fs.s3a.S3AFileSystem</value>
   </property>
   <property>
-    <name>s3a.connection.ssl.enabled</name>
+    <name>fs.s3a.connection.ssl.enabled</name>
     <value>false</value>
   </property>
   <property>
-    <name>s3a.impl.disable.cache</name>
+    <name>fs.s3a.impl.disable.cache</name>
     <value>true</value>
   </property>
   <property>
-    <name>s3a.connection.establish.timeout</name>
+    <name>fs.s3a.connection.establish.timeout</name>
     <value>5000</value>
   </property>
   <property>
-    <name>s3a.connection.timeout</name>
+    <name>fs.s3a.connection.timeout</name>
     <value>30000</value>
   </property>
   <property>
