@@ -50,7 +50,7 @@ services:
     volumes:
       - ./trino-config:/etc/trino/
       # - ./trino-jars:/usr/lib/trino/plugin/hive/
-      - ./trino-jars:/usr/lib/trino/plugin/iceberg/
+      # - ./trino-jars:/usr/lib/trino/plugin/iceberg/
 
   airflow:
     image: apache/airflow:2.9.1
