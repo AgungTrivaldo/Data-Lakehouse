@@ -127,21 +127,23 @@ services:
       - "2376:2375"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    
+
   clickhouse:
-    image: clickhouse/clickhouse-server:latest
+    image: clickhouse/clickhouse-server:24.8
+    container_name: clickhouse
     ports:
-      - "8123:8123" # HTTP interface
-      - "9000:9000" # Native client interface
+      - "8123:8123"   # HTTP interface
+      - "9004:9004"   # Native TCP interface
     volumes:
-      - clickhouse_data:/var/lib/clickhouse
-      - clickhouse_logs:/var/log/clickhouse-server
+      - ./clickhouse_data:/var/lib/clickhouse
     environment:
-      # Optional: Set a password for the default user
-      CLICKHOUSE_DB: my_database
-      CLICKHOUSE_USER: my_user
-      CLICKHOUSE_PASSWORD: my_password
-    ulimits:
-      nofile:
-        soft: 262144
-        hard: 262144
+      CLICKHOUSE_DB: default
+      CLICKHOUSE_USER: admin
+      CLICKHOUSE_PASSWORD: admin123
+
+  clickhouse-client:
+    image: clickhouse/clickhouse-client:24.8
+    container_name: clickhouse-client
+    depends_on:
+      - clickhouse
+    entrypoint: /bin/sh -c "sleep 5 && clickhouse-client --host clickhouse --port 9004 -u admin --password admin123"
