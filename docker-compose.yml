@@ -49,7 +49,7 @@ services:
       - "10.8.0.1:8080:8080" 
     volumes:
       - ./trino-config:/etc/trino/
-      - ./trino-jars:/usr/lib/trino/plugin/hive/
+      # - ./trino-jars:/usr/lib/trino/plugin/hive/
       - ./trino-jars:/usr/lib/trino/plugin/iceberg/
 
   airflow:
