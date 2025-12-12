@@ -129,7 +129,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   clickhouse:
-    image: clickhouse/clickhouse-server:24.8
+    image: clickhouse/clickhouse-server
     container_name: clickhouse
     ports:
       - "8123:8123"   # HTTP interface
@@ -142,7 +142,7 @@ services:
       CLICKHOUSE_PASSWORD: admin123
 
   clickhouse-client:
-    image: clickhouse/clickhouse-client:24.8
+    image: clickhouse/clickhouse-client
     container_name: clickhouse-client
     depends_on:
       - clickhouse
