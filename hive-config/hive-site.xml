@@ -6,7 +6,7 @@
   </property>
   <property>
     <name>fs.s3a.access.key</name>
-    <value>admin</value>
+    <value>admin123</value>
   </property>
   <property>
     <name>fs.s3a.secret.key</name>
@@ -37,11 +37,11 @@
     <value>30000</value>
   </property>
   <property>
-     <name>hive.metastore.pre.event.listeners</name>
-     <value>org.apache.hadoop.hive.ql.security.authorization.AuthorizationPreEventListener</value>
+    <name>hive.metastore.pre.event.listeners</name>
+    <value>org.apache.hadoop.hive.ql.security.authorization.AuthorizationPreEventListener</value>
   </property>
   <property>
-     <name>hive.security.metastore.authorization.manager</name>
-     <value>org.apache.hadoop.hive.ql.security.authorization.StorageBasedAuthorizationProvider</value>
+    <name>hive.security.metastore.authorization.manager</name>
+    <value>org.apache.hadoop.hive.ql.security.authorization.StorageBasedAuthorizationProvider</value>
   </property>
 </configuration>
