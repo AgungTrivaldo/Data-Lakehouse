@@ -109,7 +109,7 @@ def stock_market():
         return print("CSV Not Found")
 
 
-
+    symbols = read_symbol_list()
     url = is_api_available()
     stock_prices = stock_prices(url, symbol)
     stored_prices = store_stock_price(stock_prices)
