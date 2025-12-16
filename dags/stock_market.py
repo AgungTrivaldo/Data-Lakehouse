@@ -2,11 +2,13 @@ from airflow.decorators import dag, task
 from airflow.hooks.base import BaseHook
 from minio import Minio
 from datetime import datetime, timedelta
-from io import BytesIO
+from io import BytesIO,StringIO
 import requests
 import json
+import pandas as pd
 from airflow.sensors.base import PokeReturnValue
 from airflow.providers.docker.operators.docker import DockerOperator
+from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
 # from airflow.exception import AirflowNotFoundException
 
@@ -30,6 +32,18 @@ def stock_market():
             secure=False,
         )
         return client
+
+    @task
+    def read_symbol_list():
+        hook = S3Hook(aws_conn_id="minio_s3")
+
+        csv_str = hook.read_key(
+            bucket_name="warehouse",
+            key="data/sample.csv"
+        )
+
+        df = pd.read_csv(StringIO(csv_str))
+        return df["symbol"].tolist()
 
     @task.sensor(poke_interval=30, timeout=300, mode="poke")
     def is_api_available() -> PokeReturnValue:
