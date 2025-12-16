@@ -94,9 +94,6 @@ def stock_market():
                 return obj.object_name
         return print("CSV Not Found")
 
-    @task
-    def store_to_iceberg():
-        pass
 
 
     url = is_api_available()
