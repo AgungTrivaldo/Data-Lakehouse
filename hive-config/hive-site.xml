@@ -1,48 +1,51 @@
 <configuration>
   <property>
-    <name>fs.s3a.endpoint</name>
-    <value>http://minio:9000</value> <!-- use API port -->
+      <name>fs.s3a.endpoint</name>
+      <value>http://minio:9000</value>
+      <description>MinIO endpoint</description>
   </property>
   <property>
-    <name>fs.s3a.access.key</name>
-    <value>admin123</value>
+      <name>fs.s3a.access.key</name>
+      <value>admin123</value>
+      <description>MinIO access key</description>
   </property>
   <property>
-    <name>fs.s3a.secret.key</name>
-    <value>admin123</value>
+      <name>fs.s3a.secret.key</name>
+      <value>admin123</value>
+      <description>MinIO secret key</description>
   </property>
   <property>
-    <name>fs.s3a.path.style.access</name>
-    <value>true</value>
+      <name>fs.s3a.path.style.access</name>
+      <value>true</value>
+      <description>Enable path style access for MinIO</description>
   </property>
   <property>
-    <name>fs.s3a.impl</name>
-    <value>org.apache.hadoop.fs.s3a.S3AFileSystem</value>
+      <name>fs.s3a.connection.ssl.enabled</name>
+      <value>false</value>
+      <description>Set to false for HTTP MinIO endpoint</description>
   </property>
   <property>
-    <name>fs.s3a.connection.ssl.enabled</name>
-    <value>false</value>
+      <name>fs.s3a.impl</name>
+      <value>org.apache.hadoop.fs.s3a.S3AFileSystem</value>
+      <description>S3A Filesystem implementation</description>
   </property>
   <property>
-    <name>fs.s3a.impl.disable.cache</name>
-    <value>true</value>
+      <name>fs.s3a.impl.disable.cache</name>
+      <value>true</value>
+      <description>Disable S3A filesystem caching for better consistency</description>
   </property>
   <property>
-    <name>fs.s3a.connection.establish.timeout</name>
-    <value>5000</value>
+      <name>fs.s3a.connection.establish.timeout</name>
+      <value>5000</value>
   </property>
   <property>
-    <name>fs.s3a.connection.timeout</name>
-    <value>30000</value>
+      <name>fs.s3a.connection.timeout</name>
+      <value>30000</value>
   </property>
   <property>
-    <name>hive.metastore.warehouse.dir</name>
-    <value>fs.s3a://warehouse/</value>
-  </property>
-  <!-- <property>
     <name>hive.metastore.pre.event.listeners</name>
-    <value>org.apache.hadoop.hive.ql.security.authorization.AuthorizationPreEventListeners</value>
-  </property> -->
+    <value>org.apache.hadoop.hive.ql.security.authorization.AuthorizationPreEventListener</value>
+  </property>
   <property>
     <name>hive.security.metastore.authorization.manager</name>
     <value>org.apache.hadoop.hive.ql.security.authorization.StorageBasedAuthorizationProvider</value>
