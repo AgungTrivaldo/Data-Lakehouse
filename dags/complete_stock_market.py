@@ -3,6 +3,7 @@ from airflow.hooks.base import BaseHook
 from datetime import datetime
 from minio import Minio
 from io import BytesIO
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
 import pandas as pd
 
@@ -46,17 +47,16 @@ def stock_market():
             urls.append(url)
         return urls
     @task
-    def stock_prices(urls):
+    def fetch_stock_prices(url):
         api = BaseHook.get_connection("stock_api")
         stock_prices = []
-        for url in urls:
-            response = requests.get(url, headers=api.extra_dejson["headers"])
-            data = response.json()["chart"]["result"][0]
-            stock_prices.append(data)
+        response = requests.get(url, headers=api.extra_dejson["headers"])
+        data = response.json()["chart"]["result"][0]
+        stock_prices.append(data)
         return stock_prices
     
     symbols = get_symbol()
     urls = get_link(symbols)
-    stock_prices(urls)
+    stock_prices = fetch_stock_prices.expand(url = urls)
 
 stock_market()
