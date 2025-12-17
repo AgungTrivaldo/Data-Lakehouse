@@ -36,14 +36,14 @@ def stock_market():
         print(symbols)
         return symbols
 
-    def test_api():
+    def test_api(symbols):
         api = BaseHook.get_connection("stock_api")
         full_url = f"{api.host}{api.extra_dejson['endpoint']}"
         for symbol in symbols:
             url = f"{full_url}{symbol}?metrics=high?&interval=1d&range=1y"
-            print(url)
-    
+        return url
 
     symbols = get_symbol()
+    test_api(symbols)
 
 stock_market()
