@@ -3,6 +3,7 @@ from airflow.hooks.base import BaseHook
 from datetime import datetime
 from minio import Minio
 from io import BytesIO
+import pandas as pd
 
 @dag(
     dag_id="stock_market",
