@@ -37,19 +37,39 @@ def stock_market():
         symbols = csv['symbol'].tolist()
         print(symbols)
         return symbols
-    
     @task
-    def fetch_stock_prices(symbol):
+    def get_link(symbols):
         api = BaseHook.get_connection("stock_api")
         full_url = f"{api.host}{api.extra_dejson['endpoint']}"
-        url = f"{full_url}{symbol}?metrics=high&interval=1d&range=1y"
+        urls = []
+        for symbol in symbols:
+            url = f"{full_url}{symbol}?metrics=high?&interval=1d&range=1y"
+            urls.append(url)
+        return urls
+    
+    @task
+    def fetch_stock_prices(urls):
+        api = BaseHook.get_connection("stock_api")
         headers = api.extra_dejson.get("headers", {})
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        data = response.json()["chart"]["result"][0]
-        return data
+        stock_prices = []
+        def fetch(url):
+            try:
+                response = requests.get(url, headers=headers, timeout=10)
+                response.raise_for_status()
+                return response.json()["chart"]["result"][0]
+            except Exception as e:
+                return {"url": url, "error": str(e)}
+
+        # Thread pool for parallel requests
+        with ThreadPoolExecutor(max_workers=64) as executor:
+            futures = {executor.submit(fetch, url): url for url in urls}
+            for future in as_completed(futures):
+                stock_prices.append(future.result())
+
+        return stock_prices
     
     symbols = get_symbol()
-    stock_prices = fetch_stock_prices.expand(symbol = symbols)
+    urls = get_link(symbols)
+    fetch_stock_prices(urls)
 
 stock_market()
