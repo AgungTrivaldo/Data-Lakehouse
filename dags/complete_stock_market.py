@@ -33,7 +33,7 @@ def stock_market():
 
         csv = pd.read_csv(csv)
         symbols = csv.tolist()
-
+        print(symbols)
         return symbols
 
     def test_api():
