@@ -37,25 +37,19 @@ def stock_market():
         symbols = csv['symbol'].tolist()
         print(symbols)
         return symbols
-    @task
-    def get_link(symbols):
-        api = BaseHook.get_connection("stock_api")
-        full_url = f"{api.host}{api.extra_dejson['endpoint']}"
-        urls = []
-        for symbol in symbols:
-            url = f"{full_url}{symbol}?metrics=high?&interval=1d&range=1y"
-            urls.append(url)
-        return urls
     
     @task
-    def fetch_stock_prices(url):
+    def fetch_stock_prices(symbol):
         api = BaseHook.get_connection("stock_api")
-        response = requests.get(url, headers=api.extra_dejson["headers"])
+        full_url = f"{api.host}{api.extra_dejson['endpoint']}"
+        url = f"{full_url}{symbol}?metrics=high&interval=1d&range=1y"
+        headers = api.extra_dejson.get("headers", {})
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
         data = response.json()["chart"]["result"][0]
         return data
     
     symbols = get_symbol()
-    urls = get_link(symbols)
-    stock_prices = fetch_stock_prices.expand(url = urls)
+    stock_prices = fetch_stock_prices.expand(symbol = symbols)
 
 stock_market()
