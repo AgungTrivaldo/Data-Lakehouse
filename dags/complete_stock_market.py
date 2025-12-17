@@ -45,7 +45,7 @@ def stock_market():
             url = f"{full_url}{symbol}?metrics=high?&interval=1d&range=1y"
             urls.append(url)
         return urls
-
+    @task
     def stock_prices(urls):
         api = BaseHook.get_connection("stock_api")
         stock_prices = []
