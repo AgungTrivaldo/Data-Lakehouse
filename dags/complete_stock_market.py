@@ -24,19 +24,22 @@ def stock_market():
     
     @task
     def get_symbol():
-        csv = f"stockmarket/symbol/stock_symbol_clean.csv"
         client = minio_client()
-        with open(csv,"rb") as f:
-            data = f.read
+        csv = client.get_object(
+            bucket_name="stockmarket",
+            object_name="symbol/stock_symbol_clean.csv"
+        )
+
+        symbols = pd.read_csv_(csv)
 
         client.put_object(
             bucket_name="stockmarket",
             object_name=f"symbol/stock_symbol_clean.csv",
-            data=BytesIO(data),
-            length=len(data),
+            data=BytesIO(symbols),
+            length=len(symbols),
             content_type="text/csv"
     )
-        return data
+        return symbols
 
     def test_api():
         api = BaseHook.get_connection("stock_api")
