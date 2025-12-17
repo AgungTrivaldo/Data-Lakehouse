@@ -31,15 +31,16 @@ def stock_market():
             object_name="symbol/stock_symbol_clean.csv"
         )
 
-        symbols = pd.read_csv(csv)
-
+        csv = pd.read_csv(csv)
+        symbols_csv = csv.to_csv(index=False).encode('utf-8')
         client.put_object(
             bucket_name="stockmarket",
             object_name=f"symbol/stock_symbol_clean.csv",
-            data=BytesIO(symbols),
-            length=len(symbols),
+            data=BytesIO(symbols_csv),
+            length=len(symbols_csv),
             content_type="text/csv"
-    )
+        )
+        symbols = symbols_csv['symbol'].tolist()
         return symbols
 
     def test_api():
