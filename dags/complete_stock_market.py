@@ -97,6 +97,6 @@ def stock_market():
 
     symbols = get_symbol()
     urls = get_link(symbols)
-    stock_price = stock_prices(urls)
-    store_stock_price(stock_price)
+    stock_price = stock_prices.expand(urls)
+    store_stock_price.expand(stock_price)
 stock_market()
