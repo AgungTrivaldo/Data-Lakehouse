@@ -31,7 +31,7 @@ def stock_market():
             object_name="symbol/stock_symbol_clean.csv"
         )
 
-        symbols = pd.read_csv_(csv)
+        symbols = pd.read_csv(csv)
 
         client.put_object(
             bucket_name="stockmarket",
