@@ -24,7 +24,7 @@ def stock_market():
     
     @task
     def get_symbol():
-        csv = "stockmarket/symbol"
+        csv = f"stockmarket/symbol/stock_symbol_clean.csv"
         client = minio_client()
         with open(csv,"rb") as f:
             data = f.read
