@@ -48,7 +48,7 @@ def stock_market():
 
     def stock_prices(urls):
         api = BaseHook.get_connection("stock_api")
-        response = requests.get(url, headers=api.extra_dejson["headers"])
+        response = requests.get(urls, headers=api.extra_dejson["headers"])
         stock_prices = []
         for url in urls:
             data = response.json()["chart"]["result"][0]
