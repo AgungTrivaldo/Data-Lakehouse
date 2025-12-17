@@ -46,7 +46,7 @@ def stock_market():
             urls.append(url)
         return urls
     @task
-    def stock_prices(urls):
+    def stock_prices(symbol):
         api = BaseHook.get_connection("stock_api")
         full_url = f"{api.host}{api.extra_dejson['endpoint']}"
         url = f"{full_url}{symbol}?metrics=high&interval=1d&range=1y"
@@ -58,6 +58,6 @@ def stock_market():
         return data
     
     symbols = get_symbol()
-    fetch_results = fetch_stock_price.expand(symbol=symbols)
+    fetch_stock_price = stock_prices.expand(symbol=symbols)
 
 stock_market()
