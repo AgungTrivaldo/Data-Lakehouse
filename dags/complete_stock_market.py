@@ -3,8 +3,8 @@ from airflow.hooks.base import BaseHook
 from datetime import datetime
 from minio import Minio
 from io import BytesIO
-import requests
 import json
+import requests
 import pandas as pd
 
 @dag(
@@ -47,22 +47,20 @@ def stock_market():
             urls.append(url)
         return urls
     @task
-    def stock_prices(symbol):
+    def stock_prices(urls):
         api = BaseHook.get_connection("stock_api")
-        full_url = f"{api.host}{api.extra_dejson['endpoint']}"
-        url = f"{full_url}{symbol}?metrics=high&interval=1d&range=1y"
-
-        headers = api.extra_dejson.get("headers", {})
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        data = response.json()["chart"]["result"][0]
-        return data
+        stock_prices = []
+        for url in urls:
+            response = requests.get(url, headers=api.extra_dejson["headers"])
+            data = response.json()["chart"]["result"][0]
+            stock_prices.append(data)
+        return stock_prices
     @task
-    def store_stock_price(stock_price):
+    def store_stock_price(stock_prices):
         client = minio_client()
         if not client.bucket_exists("storemarket"):
             client.make_bucket("storemarket")
-        stock = json.loads(stock_price)
+        stock = json.loads(stock_prices)
         symbol = stock["meta"]["symbol"]
         data = json.dumps(stock, ensure_ascii=False).encode("utf8")
         objw = client.put_object(
@@ -72,9 +70,8 @@ def stock_market():
             length=len(data),
         )
         return f"{objw.bucket_name}/{symbol}"
-
     symbols = get_symbol()
-    stock_price = stock_prices.expand(symbol=symbols)
-    store_stock_price(stock_price)
+    urls = get_link(symbols)
+    stock_prices(urls)
 
 stock_market()
