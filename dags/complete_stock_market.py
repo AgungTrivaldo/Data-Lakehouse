@@ -40,7 +40,7 @@ def stock_market():
             length=len(symbols_csv),
             content_type="text/csv"
         )
-        symbols = symbols_csv['symbol'].tolist()
+        symbols = symbols_csv.tolist()
         return symbols
 
     def test_api():
