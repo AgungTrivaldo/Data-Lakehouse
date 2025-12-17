@@ -3,6 +3,7 @@ from airflow.hooks.base import BaseHook
 from datetime import datetime
 from minio import Minio
 from io import BytesIO
+import requests
 import pandas as pd
 
 @dag(
@@ -36,7 +37,7 @@ def stock_market():
         print(symbols)
         return symbols
     @task
-    def test_api(symbols):
+    def get_link(symbols):
         api = BaseHook.get_connection("stock_api")
         full_url = f"{api.host}{api.extra_dejson['endpoint']}"
         urls = []
@@ -45,7 +46,17 @@ def stock_market():
             urls.append(url)
         return urls
 
+    def stock_prices(urls):
+        api = BaseHook.get_connection("stock_api")
+        response = requests.get(url, headers=api.extra_dejson["headers"])
+        stock_prices = []
+        for url in urls:
+            data = response.json()["chart"]["result"][0]
+            stock_prices.append(data)
+        return stock_prices
+    
     symbols = get_symbol()
-    test_api(symbols)
+    urls = get_link(symbols)
+    stock_prices = stock_prices(urls)
 
 stock_market()
