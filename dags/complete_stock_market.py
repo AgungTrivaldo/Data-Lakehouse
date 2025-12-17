@@ -4,6 +4,7 @@ from datetime import datetime
 from minio import Minio
 from io import BytesIO
 import requests
+import json
 import pandas as pd
 
 @dag(
@@ -56,8 +57,24 @@ def stock_market():
         response.raise_for_status()
         data = response.json()["chart"]["result"][0]
         return data
-    
+    @task
+    def store_stock_price(stock_price):
+        client = minio_client()
+        if not client.bucket_exists("storemarket"):
+            client.make_bucket("storemarket")
+        stock = json.loads(stock_price)
+        symbol = stock["meta"]["symbol"]
+        data = json.dumps(stock, ensure_ascii=False).encode("utf8")
+        objw = client.put_object(
+            bucket_name="storemarket",
+            object_name=f"{symbol}/prices.json",
+            data=BytesIO(data),
+            length=len(data),
+        )
+        return f"{objw.bucket_name}/{symbol}"
+
     symbols = get_symbol()
-    fetch_stock_price = stock_prices.expand(symbol=symbols)
+    stock_price = stock_prices.expand(symbol=symbols)
+    store_stock_price(stock_price)
 
 stock_market()
