@@ -46,14 +46,13 @@ def stock_market():
             url = f"{full_url}{symbol}?metrics=high?&interval=1d&range=1y"
             urls.append(url)
         return urls
+    
     @task
     def fetch_stock_prices(url):
         api = BaseHook.get_connection("stock_api")
-        stock_prices = []
         response = requests.get(url, headers=api.extra_dejson["headers"])
         data = response.json()["chart"]["result"][0]
-        stock_prices.append(data)
-        return stock_prices
+        return data
     
     symbols = get_symbol()
     urls = get_link(symbols)
