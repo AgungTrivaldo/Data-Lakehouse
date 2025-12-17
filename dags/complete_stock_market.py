@@ -35,7 +35,7 @@ def stock_market():
         symbols = csv['symbol'].tolist()
         print(symbols)
         return symbols
-
+    @task
     def test_api(symbols):
         api = BaseHook.get_connection("stock_api")
         full_url = f"{api.host}{api.extra_dejson['endpoint']}"
