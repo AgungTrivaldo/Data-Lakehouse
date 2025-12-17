@@ -56,11 +56,11 @@ def stock_market():
             stock_prices.append(data)
         return stock_prices
     @task
-    def store_stock_price(stock_prices):
+    def store_stock_price(stock_price):
         client = minio_client()
         if not client.bucket_exists("storemarket"):
             client.make_bucket("storemarket")
-        stock = json.loads(stock_prices)
+        stock = json.loads(stock_price)
         symbol = stock["meta"]["symbol"]
         data = json.dumps(stock, ensure_ascii=False).encode("utf8")
         objw = client.put_object(
@@ -72,6 +72,6 @@ def stock_market():
         return f"{objw.bucket_name}/{symbol}"
     symbols = get_symbol()
     urls = get_link(symbols)
-    stock_prices(urls)
-
+    stock_price = stock_prices(urls)
+    store_stock_price(stock_price)
 stock_market()
