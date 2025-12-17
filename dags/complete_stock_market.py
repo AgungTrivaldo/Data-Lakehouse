@@ -43,7 +43,7 @@ def stock_market():
         for symbol in symbols:
             url = f"{full_url}{symbol}?metrics=high?&interval=1d&range=1y"
             urls.append(url)
-        return url
+        return urls
 
     symbols = get_symbol()
     test_api(symbols)
