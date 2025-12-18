@@ -95,8 +95,57 @@ def stock_market():
             content_type="text/csv",
         )
 
+    @task
+    def convert_csv(stock_price):
+        client = minio_client()
+        csv_obj = client.get_object(bucket_name="stockmarket", object_name="symbol/stock_symbol_clean.csv")
+        symbols_df = pd.read_csv(csv_obj)
+        symbols = symbols_df['symbol'].tolist()
+
+        # Get API connection
+        api_conn = BaseHook.get_connection("stock_api")
+        base_url = f"{api_conn.host}{api_conn.extra_dejson['endpoint']}"
+
+        all_rows = []
+
+        # Fetch data for each symbol
+        for symbol in symbols:
+            url = f"{base_url}{symbol}?metrics=high?&interval=1d&range=1y"
+            response = requests.get(url, headers=api_conn.extra_dejson["headers"])
+            data = response.json()["chart"]["result"][0]
+
+            timestamps = data["timestamp"]
+            quote = data["indicators"]["quote"][0]
+
+            for i, ts in enumerate(timestamps):
+                all_rows.append({
+                    "symbol": symbol,
+                    "timestamp": pd.to_datetime(ts, unit="s"),
+                    "open": quote.get("open")[i],
+                    "high": quote.get("high")[i],
+                    "low": quote.get("low")[i],
+                    "close": quote.get("close")[i],
+                    "volume": quote.get("volume")[i],
+                })
+
+        # Convert to DataFrame
+        df = pd.DataFrame(all_rows)
+
+        # Write CSV to MinIO
+        csv_bytes = df.to_csv(index=False).encode("utf-8")
+        if not client.bucket_exists("storemarket"):
+            client.make_bucket("storemarket")
+
+        client.put_object(
+            bucket_name="storemarket",
+            object_name="all_stock_prices.csv",
+            data=BytesIO(csv_bytes),
+            length=len(csv_bytes),
+            content_type="text/csv",
+        )
     symbols = get_symbol()
     urls = get_link(symbols)
     stock_price = stock_prices(urls)
-    store_stock_price.expand(stock_price = stock_price)
+    convert_csv.expand(stock_price = stock_price)
+    # store_stock_price.expand(stock_price = stock_price)
 stock_market()
