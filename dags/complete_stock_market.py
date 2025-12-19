@@ -146,6 +146,6 @@ def stock_market():
     symbols = get_symbol()
     urls = get_link(symbols)
     stock_price = stock_prices(urls)
-    convert_csv.expand(stock_price = stock_price)
+    convert_csv(stock_price)
     # store_stock_price.expand(stock_price = stock_price)
 stock_market()
